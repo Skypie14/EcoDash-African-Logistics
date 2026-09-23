@@ -14,14 +14,14 @@
             <h3>Battery Life [Health]</h3>
 
             <div class="health-bar">
-            <p>[/////////]</p>
+            <p id ="healthText">Health: 10</p>
             </div>
 
-            <h2 class="score">Score: 0</h2>
+            <h2  id ="scoreText" class="score">Score: 0</h2>
         </div>
 
         <div class="gameArea">
-            <h1>Title</h1>
+            <h1 id="levelTitle">Level 1</h1>
 
             <canvas id="gameCanvas" width="400" height="700"> <p>Hello</p></canvas>
         </div>
@@ -29,10 +29,10 @@
         <div class="rightPanel">
             <h2>How to Play</h2>
 
-            <p><strong>.</strong></p>
-            <p><strong>.</strong></p>
-            <p><strong>.</strong></p>
-            <p><strong>.</strong></p>
+            <p><strong>. You are a boat that is trying to take the package across the flooded roads</strong></p>
+            <p><strong>. Collect Batteries to increase score and health [Green boxes]</strong></p>
+            <p><strong>. Avoid Obstacles to prevent losing health [Red boxes]</strong></p>
+            <p><strong>. Reach the Checkpoint to complete the level [Yellow box]</strong></p>
             <br> <br> <br> <br>
             <button id="startBtn">Start</button>
             <button id="resetBtn">Reset</button>

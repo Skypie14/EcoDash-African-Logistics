@@ -14,6 +14,11 @@ let startTime = 0;
 let gameRunning = false;
 let levelComplete = false;
 
+let hitSound = new Audio("hit.mp3"); //https://dev.to/amitavmishra99/play-audio-with-htmlaudioelement-api-in-javascript-2fcf
+let collectSound = new Audio("battery.mp3");
+let checkpointSound = new Audio("checkpoint.mp3");
+// what Audio does is that it creates a new audio object so that you can play the sound
+
 
 // tracks what key is currently being pressed
 const keys = {};
@@ -61,10 +66,15 @@ function update() { //only moves the boat left and right not up and down
     battery.y += battery.speed;
 
     if (collision(boat, battery)) {
-        health += 10;
-        if (health > 100) health = 100;
+        health += 1;
+        if (health > 10) health = 10; // caps health at 10
+        collectSound.play(); //plays the sound when the boat collides with a battery
 
         score += 10;
+
+        updateUI(); // update screen
+
+
         batteries.splice(index, 1);
     }
 
@@ -83,7 +93,9 @@ obstacles.forEach((obstacle, index) => {
 
     if (collision(boat, obstacle)) {
         health -= 2;
+        updateUI(); // update screen
         obstacles.splice(index, 1);
+        hitSound.play(); //plays the sound when the boat collides with an obstacle
 
         if (health <= 0) {
             alert("Game Over!");
@@ -106,6 +118,8 @@ if (checkpoint) {
     checkpoint.y += checkpoint.speed;
 
     if (collision(boat, checkpoint)) {
+        checkpointSound.play(); //plays the sound when the boat collides with a checkpoint
+        levelComplete = true;
         gameRunning = false;
 
         document.getElementById("startBtn").textContent = "Next Level";
@@ -174,9 +188,9 @@ function spawnObstacle() {
 
 function spawnCheckpoint() {
     checkpoint = {
-        x: canvas.width / 2 - 40,
+        x: 0, //covers the entire width of the canvas
         y: -40,
-        width: 80,
+        width: canvas.width ,
         height: 30,
         speed: 2
     };
@@ -193,6 +207,13 @@ function collision(a, b) {
     );
 }
 
+//updates health and score when boat collides w/ battery or obstacle
+function updateUI() {
+    document.getElementById("healthText").textContent = "Health: " + health;
+    document.getElementById("scoreText").textContent = "Score: " + score;
+    document.getElementById("levelTitle").textContent = "Level " + level;
+
+}
 
 function gameLoop() { //game loop that runs the game
 
@@ -243,6 +264,8 @@ document.getElementById("resetBtn").addEventListener("click", () => { // resets 
     health = 10;
     score = 0;
     level = 1;
+    
+    updateUI();
 
     // Clear all objects
     batteries = [];
@@ -251,9 +274,6 @@ document.getElementById("resetBtn").addEventListener("click", () => { // resets 
 
     // Reset timer
     startTime = 0;
-
-    // Reset heading
-    document.querySelector(".gameArea h1").textContent = "Title"; //resets headline to title
 
     // Reset start button
     document.getElementById("startBtn").textContent = "Start"; //resets start button to start instead of next level
