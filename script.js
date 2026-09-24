@@ -6,7 +6,7 @@ const ctx = canvas.getContext("2d");
 //VARIABLES
 let health = 10;
 let score = 0;
-let level = 1;
+let level = 0;
 let batteries = [];
 let obstacles = [];
 let checkpoint = null;
@@ -209,7 +209,7 @@ function collision(a, b) {
 
 //updates health and score when boat collides w/ battery or obstacle
 function updateUI() {
-    document.getElementById("healthText").textContent = "Health: " + health;
+    document.getElementById("healthText").textContent =  health;
     document.getElementById("scoreText").textContent = "Score: " + score;
     document.getElementById("levelTitle").textContent = "Level " + level;
 
@@ -250,6 +250,8 @@ document.getElementById("startBtn").addEventListener("click", () => {
         startTime = Date.now(); //resets the timer for the checkpoint
 
         level++;
+
+        updateUI();
 
         gameLoop(); //game loop starts
     }});
