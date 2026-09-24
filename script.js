@@ -265,7 +265,7 @@ document.getElementById("resetBtn").addEventListener("click", () => { // resets 
     // Reset stats
     health = 10;
     score = 0;
-    level = 1;
+    level = 0;
     
     updateUI();
 
