@@ -19,17 +19,28 @@ let collectSound = new Audio("battery.mp3");
 let checkpointSound = new Audio("checkpoint.mp3");
 // what Audio does is that it creates a new audio object so that you can play the sound
 
+// Water current
+let currentAngle =
+    parseFloat(localStorage.getItem("currentAngle")) ||
+    Math.random() * Math.PI * 2;
+
+let currentX = Math.cos(currentAngle);
+let currentY = Math.sin(currentAngle);
 
 // tracks what key is currently being pressed
 const keys = {};
 
-//the boat object's information/location and size
+//the boat info
 const boat = {
     x: 175,
     y: 650,
     width: 50,
     height: 25,
-    speed: 5
+    speed: 5,
+    verlocity: 0,
+    acceleration: 0.3,
+    maxSpeed: 5,
+    friction: 0.2
 };
 
 // key up and down event to check if its being pressed or not 
@@ -44,13 +55,41 @@ document.addEventListener("keyup", (event) => {
 function update() { //only moves the boat left and right not up and down
     // moves the boat to the left
     if (keys["ArrowLeft"] || keys["a"]) {
-        boat.x -= boat.speed;
+        boat.verlocity -= boat.acceleration;
     }
 
     // moves the boat to the right
     if (keys["ArrowRight"] || keys["d"]) {
-        boat.x += boat.speed;
+        boat.verlocity += boat.acceleration;
     }
+
+    // friction
+    if (!(keys["ArrowLeft"] || keys["a"]) && !(keys["ArrowRight"] || keys["d"])) {
+
+    if (boat.verlocity > 0) {
+        boat.verlocity -= boat.friction;
+    }
+
+    if (boat.verlocity < 0) {
+        boat.verlocity += boat.friction;
+    }
+
+    if (Math.abs(boat.verlocity) < boat.friction) {
+        boat.verlocity = 0;
+    }
+
+    }   
+
+    if (boat.verlocity > boat.maxSpeed) {
+    boat.verlocity = boat.maxSpeed;
+    }
+
+    if (boat.verlocity < -boat.maxSpeed) {
+        boat.verlocity = -boat.maxSpeed;
+    }
+    boat.x += boat.verlocity;
+
+
 
     // Keep boat inside of the canvas
     if (boat.x < 0) {
@@ -63,7 +102,18 @@ function update() { //only moves the boat left and right not up and down
 
     // moves the batteries down the screen and checks for collision w/ the boat
     batteries.forEach((battery, index) => {
-    battery.y += battery.speed;
+    
+
+    const boatDirectionY = -1;
+    if (currentY * boatDirectionY > 0) {
+        battery.verlocity += 0.01; // moving with boat direction
+    } else {
+        battery.verlocity -= 0.01; // moving against boat direction
+    }
+
+if (battery.verlocity < 0.5) battery.verlocity = 0.5;
+
+battery.y += battery.verlocity;
 
     if (collision(boat, battery)) {
         health += 1;
@@ -89,7 +139,16 @@ function update() { //only moves the boat left and right not up and down
 
 // moves the obstacles down the screen and checks for collision w/ the boat
 obstacles.forEach((obstacle, index) => {
-    obstacle.y += obstacle.speed;
+    const boatDirectionY = -1;
+    if (currentY * boatDirectionY > 0) {
+        obstacle.verlocity += 0.01; // current toward boat
+    } else {
+        obstacle.verlocity -= 0.01; // current against boat
+    }
+
+if (obstacle.verlocity < 0.5) obstacle.verlocity = 0.5;
+
+obstacle.y += obstacle.verlocity;
 
     if (collision(boat, obstacle)) {
         health -= 2;
@@ -172,7 +231,8 @@ function spawnBattery() {
         y: -20,
         width: 20,
         height: 20,
-        speed: 2
+        speed: 2,
+        verlocity: 2
     });
 }
 
@@ -182,7 +242,8 @@ function spawnObstacle() {
         y: -25,
         width: 25,
         height: 25,
-        speed: 3
+        speed: 3,
+        verlocity: 3
     });
 }
 
@@ -212,6 +273,8 @@ function updateUI() {
     document.getElementById("healthText").textContent =  health;
     document.getElementById("scoreText").textContent = "Score: " + score;
     document.getElementById("levelTitle").textContent = "Level " + level;
+    document.getElementById("currentAngle").textContent = "The current angle is: " +
+        (currentY * -1 > 0 ? "towards the boat" : "against the boat");
 
 }
 
@@ -249,12 +312,18 @@ document.getElementById("startBtn").addEventListener("click", () => {
 
         startTime = Date.now(); //resets the timer for the checkpoint
 
+        currentAngle = Math.random() * Math.PI * 2;
+        localStorage.setItem("currentAngle", currentAngle);
+        currentX = Math.cos(currentAngle);
+        currentY = Math.sin(currentAngle);
+
         level++;
 
-        updateUI();
-
+        updateUI();  
+        //fixes the current angle
         gameLoop(); //game loop starts
-    }});
+    } 
+});
 
 document.getElementById("resetBtn").addEventListener("click", () => { // resets the game when clicked
 
@@ -268,6 +337,7 @@ document.getElementById("resetBtn").addEventListener("click", () => { // resets 
     level = 0;
     
     updateUI();
+    document.getElementById("currentAngle").textContent = "The current angle is: towards/against the boat";
 
     // Clear all objects
     batteries = [];
