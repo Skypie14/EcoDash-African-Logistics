@@ -1,0 +1,101 @@
+14:04 2026/08/30
+
+Prompt: Give me a couple ideas on how to format a Wireframe including these Wireframe Create a sketch (hand-drawn or digital) showing: • Main game screen • Player • HUD • Score • Battery indicator • Buttons • Mini-map (optional)
+
+Answer:
+Here are a few ways you could format your wireframe. Since a wireframe is mainly about showing where everything goes, you do not need detailed artwork. Simple boxes, labels, and arrows are enough. 🎮
+
+Idea 1: Classic Top-Down Game Layout
+
+Best if your game uses a top-down view.
+
+┌─────────────────────────────────────────────────────────────┐
+│ SCORE: 000250                         BATTERY: █████░ 80% │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│                                                     ┌─────┐ │
+│                                                     │ MINI│ │
+│                                                     │ MAP │ │
+│                                                     └─────┘ │
+│                                                             │
+│                                                             │
+│                       [ PLAYER ]                            │
+│                           ●                                 │
+│                                                             │
+│                                                             │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│   [PAUSE]        [ACTION / INTERACT]       [SETTINGS]      │
+└─────────────────────────────────────────────────────────────┘
+
+Labels you can add with arrows:
+
+Player → Points to the character
+HUD → Top section containing score and battery
+Score → Top left
+Battery Indicator → Top right
+Mini-map → Right side
+Buttons → Bottom of the screen
+Idea 2: Mobile Game Wireframe
+
+If the game is designed for a phone, a vertical layout could work well.
+
+┌───────────────────────────┐
+│ SCORE: 250      🔋 80%    │
+├───────────────────────────┤
+│                    ┌────┐ │
+│                    │MAP │ │
+│                    └────┘ │
+│                           │
+│                           │
+│                           │
+│            ●              │
+│         PLAYER            │
+│                           │
+│                           │
+│                           │
+│                           │
+├───────────────────────────┤
+│ [←] [↑] [↓] [→]  [ACTION] │
+│                           │
+│         [PAUSE]           │
+└───────────────────────────┘
+
+This format is useful if you want to show touch controls directly on the wireframe.
+
+Idea 3: Detailed Assignment Wireframe
+
+You could make the wireframe look more like a labelled design document.
+
+                 GAME WIREFRAME
+
+      ┌──────────────────────────────┐
+      │  SCORE              BATTERY  │ ← HUD
+      │  250                ████░░   │
+      ├──────────────────────────────┤
+      │                      ┌─────┐ │
+      │                      │MAP  │ │ ← Mini-map
+      │                      └─────┘ │
+      │                              │
+      │                              │
+      │             [PLAYER]         │ ← Player
+      │                              │
+      │                              │
+      ├──────────────────────────────┤
+      │ [BUTTON] [BUTTON] [BUTTON]   │ ← Controls
+      └──────────────────────────────┘
+
+Underneath, add a small key/legend:
+
+Element	Purpose
+Player	Controlled by the user
+HUD	Displays important game information
+Score	Shows the player's current points
+Battery Indicator	Shows remaining battery or energy
+Buttons	Used for movement, actions, or pausing
+Mini-map	Shows the player's location in the game world
+My recommendation
+
+For an assignment, I would use Idea 3 because it clearly demonstrates every required element. You can draw it by hand or create it digitally using rectangles and labels. It looks organised without requiring you to make the game screen visually detailed.
+
+If your game already has a specific genre, such as horror, top-down survival, platformer, or mobile game, the wireframe can be shaped around that genre too.
