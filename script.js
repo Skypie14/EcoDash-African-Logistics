@@ -3,7 +3,7 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-//VARIABLES
+//Variables
 let health = 10;
 let score = 0;
 let level = 0;
@@ -22,10 +22,10 @@ let checkpointSound = new Audio("checkpoint.mp3");
 // Water current
 let currentAngle =
     parseFloat(localStorage.getItem("currentAngle")) ||
-    Math.random() * Math.PI * 2;
+    Math.random() * Math.PI * 2; //randomizes the current angle if there is no current angle in storage
 
-let currentX = Math.cos(currentAngle);
-let currentY = Math.sin(currentAngle);
+let currentX = Math.cos(currentAngle); // calculates the x of current angle
+let currentY = Math.sin(currentAngle); // calculates the y of current angle
 
 // tracks what key is currently being pressed
 const keys = {};
@@ -63,7 +63,7 @@ function update() { //only moves the boat left and right not up and down
         boat.verlocity += boat.acceleration;
     }
 
-    // friction
+    // friction to slow down the boat when no key is being pressed
     if (!(keys["ArrowLeft"] || keys["a"]) && !(keys["ArrowRight"] || keys["d"])) {
 
     if (boat.verlocity > 0) {
@@ -80,6 +80,8 @@ function update() { //only moves the boat left and right not up and down
 
     }   
 
+    // stops the boat from going faster than max speed
+
     if (boat.verlocity > boat.maxSpeed) {
     boat.verlocity = boat.maxSpeed;
     }
@@ -87,11 +89,11 @@ function update() { //only moves the boat left and right not up and down
     if (boat.verlocity < -boat.maxSpeed) {
         boat.verlocity = -boat.maxSpeed;
     }
+
+    //boat position updates based on verlocity
     boat.x += boat.verlocity;
 
-
-
-    // Keep boat inside of the canvas
+    // Keep boat inside of the canvas [barriers]
     if (boat.x < 0) {
         boat.x = 0;
     }
@@ -104,35 +106,36 @@ function update() { //only moves the boat left and right not up and down
     batteries.forEach((battery, index) => {
     
 
-    const boatDirectionY = -1;
+    const boatDirectionY = -1; 
     if (currentY * boatDirectionY > 0) {
         battery.verlocity += 0.01; // moving with boat direction
     } else {
         battery.verlocity -= 0.01; // moving against boat direction
     }
 
-if (battery.verlocity < 0.5) battery.verlocity = 0.5;
+    if (battery.verlocity < 0.5) battery.verlocity = 0.5; // set a min speed for battery
+        
+    battery.y += battery.verlocity; // update battery position
 
-battery.y += battery.verlocity;
-
+ // checks for collision w/ the boat and battery
     if (collision(boat, battery)) {
-        health += 1;
+        health += 1; //increase health
         if (health > 10) health = 10; // caps health at 10
         collectSound.play(); //plays the sound when the boat collides with a battery
 
-        score += 10;
+        score += 10; //score increase
 
         updateUI(); // update screen
 
 
+        batteries.splice(index, 1); //removes battery after collision
+    }
+
+    if (battery.y > canvas.height) { //removes battery if it goes off screen
         batteries.splice(index, 1);
     }
 
-    if (battery.y > canvas.height) {
-        batteries.splice(index, 1);
-    }
-
-    if (!checkpoint && Date.now() - startTime >= 60000) {
+    if (!checkpoint && Date.now() - startTime >= 60000) { //shows checkpoint after the time has passed [1 min]
     spawnCheckpoint();
 }
 });
@@ -146,23 +149,23 @@ obstacles.forEach((obstacle, index) => {
         obstacle.verlocity -= 0.01; // current against boat
     }
 
-if (obstacle.verlocity < 0.5) obstacle.verlocity = 0.5;
+if (obstacle.verlocity < 0.5) obstacle.verlocity = 0.5; //min speed for obstacle
 
 obstacle.y += obstacle.verlocity;
 
-    if (collision(boat, obstacle)) {
-        health -= 2;
+    if (collision(boat, obstacle)) { //checks for collision w/ the boat and obstacle
+         health -= 2;
         updateUI(); // update screen
         obstacles.splice(index, 1);
         hitSound.play(); //plays the sound when the boat collides with an obstacle
 
-        if (health <= 0) {
+        if (health <= 0) { //ends game if health = 0
             alert("Game Over!");
             resetGame();
         }
     }
 
-    if (obstacle.y > canvas.height) {
+    if (obstacle.y > canvas.height) { //removes obstacle if it goes off screen
         obstacles.splice(index, 1);
     }
 });
@@ -289,13 +292,13 @@ function gameLoop() { //game loop that runs the game
     requestAnimationFrame(gameLoop);
 }
 
-setInterval(() => {
+setInterval(() => { //spawns batteries every 2 seconds
     if (gameRunning) {
         spawnBattery();
     }
 }, 2000);
 
-setInterval(() => {
+setInterval(() => { //spawns obstacles every 1.5 seconds
     if (gameRunning) {
         spawnObstacle();
     }
