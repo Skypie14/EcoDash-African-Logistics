@@ -1,6 +1,8 @@
  WAS262_SF1
  25301714 Sky Petersen
 
+ECODASH AFRICAN LOGISTICS
+
 Project Summary:
 This game simulates using a boat type drone that drives through the flooded waters of the Mozamqiue roads. You are dodging obstacles 
 

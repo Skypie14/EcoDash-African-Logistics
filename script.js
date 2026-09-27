@@ -161,7 +161,6 @@ obstacle.y += obstacle.verlocity;
 
         if (health <= 0) { //ends game if health = 0
             alert("Game Over!");
-            resetGame();
         }
     }
 

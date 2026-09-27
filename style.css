@@ -20,20 +20,20 @@ body {
     background-color: white;
     padding: 15px;
     border-radius: 10px;
-    border: 2px solid #2e8b57;
+    border: 2px solid #2C6E63;
     text-align: center;
     
 }
 
 .healthBar {
-    background-color: #e8f5e9;
+    background-color: #FBE5B6;
     padding: 10px;
     border-radius: 8px;
     margin-bottom: 15px;
 }
 
 .Score {
-    color:#1e7c1e
+    color: #2C6E63
 }
 
 /* Area in the center - The game*/
@@ -43,7 +43,7 @@ body {
 }
 
 .gameArea h1{
-    color: #004080
+    color: #561217
 }
 
 canvas {
@@ -59,13 +59,13 @@ canvas {
     background-color: white;
     padding: 15px;
     border-radius: 10px;
-    border: 2px solid #2e8b57;
+    border: 2px solid #2C6E63;
 
 }
 
 .rightPanel h2 {
     text-align: center;
-    color: #006400;
+    color: #561217;
 }
 
 .rightPanel p {
@@ -90,19 +90,19 @@ button {
 }
 
 #startBtn {
-background-color: #28a745;
-color: white;
+background-color: #F38218;
+color: #FBE5B6;
 }
 
 #startBtn:hover {
-background-color: #218838;
+background-color: #561217;
 }
 
 #resetBtn {
-background-color: #dc3545;
-color: white;
+background-color: #561217;
+color: #FBE5B6;
 }
 
 #resetBtn:hover {
-background-color: #c82333;
+background-color: #2C6E63;
 }
