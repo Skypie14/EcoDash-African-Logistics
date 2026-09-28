@@ -117,14 +117,18 @@ function update() { //only moves the boat left and right not up and down
         
     battery.y += battery.verlocity; // update battery position
 
- // checks for collision w/ the boat and battery
+ // checks for collision w/ the boat and battery/crate
     if (collision(boat, battery)) {
-        health += 1; //increase health
-        if (health > 10) health = 10; // caps health at 10
-        collectSound.play(); //plays the sound when the boat collides with a battery
 
-        score += 10; //score increase
+        if (battery.type === "battery") {
+            health += 1; //increase health
+          if (health > 10) health = 10; // caps health at 10
+            score += 10; //score increase
+        } else if (battery.type === "crate") {
+            score += 20; //score increase
+        }
 
+        collectSound.play(); //plays the sound when the boat collides with a crate
         updateUI(); // update screen
 
 
@@ -197,20 +201,141 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw boat
-    ctx.fillStyle = "brown";
-    ctx.fillRect(boat.x, boat.y, boat.width, boat.height);
+    
+    ctx.fillStyle = "#161e27";
+    ctx.fillRect(boat.x, boat.y + 8, 50, 17);
 
-    // Draw batteries
-    ctx.fillStyle = "lime";
-    batteries.forEach(battery => {
-    ctx.fillRect(battery.x, battery.y, battery.width, battery.height);
-    });
+    ctx.beginPath();
+    ctx.moveTo(boat.x + 50, boat.y + 8);
+    ctx.lineTo(boat.x + 60, boat.y + 16);
+    ctx.lineTo(boat.x + 50, boat.y + 25);
+    ctx.fill();
+    
+    ctx.fillStyle = "#505657";
+    ctx.fillRect(boat.x + 10, boat.y + 2, 25, 10);
+
+    ctx.fillStyle = "#65caf1";
+    ctx.fillRect(boat.x + 15, boat.y + 4, 15, 6);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(boat.x + 22, boat.y + 2);
+    ctx.lineTo(boat.x + 22, boat.y - 8);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(boat.x + 16, boat.y - 8);
+    ctx.lineTo(boat.x + 28, boat.y - 8);
+    ctx.stroke();
+    ctx.fillStyle = "black";
+    
+    ctx.beginPath();
+    ctx.arc(boat.x + 16, boat.y - 8, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(boat.x + 28, boat.y - 8, 2, 0, Math.PI * 2);
+
+
+    // Draw batteries 
+    batteries.forEach(item => {
+
+    if (item.type === "battery") {
+        ctx.fillStyle = "lime";
+
+        // body
+        ctx.fillRect(item.x, item.y, 20, 25);
+
+        // top terminal
+        ctx.fillStyle = "silver";
+        ctx.fillRect(item.x + 6, item.y - 4, 8, 4);
+    }
+    // draw crate
+    if (item.type === "crate") {
+        ctx.fillStyle = "saddlebrown";
+        ctx.fillRect(item.x, item.y, 25, 25);
+
+        ctx.strokeStyle = "tan";
+
+        ctx.beginPath();
+        ctx.moveTo(item.x, item.y);
+        ctx.lineTo(item.x + 25, item.y + 25);
+
+        ctx.moveTo(item.x + 25, item.y);
+        ctx.lineTo(item.x, item.y + 25);
+        ctx.stroke();
+    }
+});
 
     // draw obstacles
-    ctx.fillStyle = "red";
     obstacles.forEach(obstacle => {
-    ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-    });
+
+    // draws houses
+    if (obstacle.type === "house") {
+
+        ctx.fillStyle = "#d2b48c";
+        ctx.fillRect(
+            obstacle.x,
+            obstacle.y + 15,
+            40,
+            25
+        );
+
+        ctx.fillStyle = "darkred";
+        ctx.beginPath();
+        ctx.moveTo(obstacle.x, obstacle.y + 15);
+        ctx.lineTo(obstacle.x + 20, obstacle.y);
+        ctx.lineTo(obstacle.x + 40, obstacle.y + 15);
+        ctx.fill();
+    }
+
+    // draws logs
+    if (obstacle.type === "logs") {
+
+        ctx.fillStyle = "saddlebrown";
+
+        ctx.fillRect(
+            obstacle.x,
+            obstacle.y,
+            50,
+            8
+        );
+
+        ctx.fillRect(
+            obstacle.x,
+            obstacle.y + 10,
+            50,
+            8
+        );
+    }
+
+    // debris
+    if (obstacle.type === "debris") {
+
+        ctx.fillStyle = "#666";
+
+        ctx.fillRect(
+            obstacle.x,
+            obstacle.y,
+            12,
+            12
+        );
+
+        ctx.fillRect(
+            obstacle.x + 10,
+            obstacle.y + 8,
+            12,
+            12
+        );
+
+        ctx.fillRect(
+            obstacle.x + 5,
+            obstacle.y + 18,
+            14,
+            10
+        );
+    }
+});
 
     // draw checkpoint
     if (checkpoint) {
@@ -227,8 +352,14 @@ function draw() {
 
 // battery and obstacle and checkpoint creation functions
 
-function spawnBattery() {
+function spawnBattery() { // creates a battery or crate randomly
+
+    const collectibleType = ["battery", "crate"];
+    const type = collectibleType[Math.floor(Math.random() * collectibleType.length)];
+
+
     batteries.push({
+        type: type,
         x: Math.random() * (canvas.width - 20),
         y: -20,
         width: 20,
@@ -238,12 +369,35 @@ function spawnBattery() {
     });
 }
 
+//spawns obstacles randomly on the screen that could be a house, wood log or debris
 function spawnObstacle() {
+    const obstacleType = [
+        {
+            type: "house",
+            width: 40,
+            height: 50
+        },
+        {
+            type: "logs",
+            width: 30,
+            height: 10
+        },
+        {
+            type: "debris",
+            width: 20,
+            height: 20
+        }
+    ];
+
+    const obsType = obstacleType[Math.floor(Math.random() * obstacleType.length)];
+
+    
     obstacles.push({
+        type: obsType.type,
         x: Math.random() * (canvas.width - 25),
-        y: -25,
-        width: 25,
-        height: 25,
+        y: -30,
+        width: obsType.width,
+        height: obsType.height,
         speed: 3,
         verlocity: 3
     });
