@@ -15,6 +15,7 @@ let gameRunning = false;
 let levelComplete = false;
 let collectedCrates = 0;
 let unloading = false;
+let gameOver = false;
 
 let hitSound = new Audio("hit.mp3"); //https://dev.to/amitavmishra99/play-audio-with-htmlaudioelement-api-in-javascript-2fcf
 let collectSound = new Audio("battery.mp3");
@@ -215,9 +216,7 @@ obstacle.y += obstacle.verlocity;
             health = 0;
             updateUI();
             gameRunning = false;
-            GameOver=true;
-
-            sinking = true;
+            gameOver=true;
 
             batteries = [];
             obstacles = [];
@@ -355,6 +354,22 @@ function draw() {
         ctx.fillRect(250 + (i % 10) * 16,checkpoint.y + 2 + Math.floor(i / 10) * 15,12,12);
     }
 }
+
+// Draw Game Over screen
+if (gameOver) {
+
+    ctx.fillStyle = "red";
+    ctx.font = "bold 60px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 30);
+
+    ctx.fillStyle = "white";
+    ctx.font = "30px Arial";
+    ctx.fillText("Final Score: " + score,canvas.width / 2,canvas.height / 2 + 30);
+
+    ctx.font = "20px Arial";
+    ctx.fillText("Press Reset to Play Again",canvas.width / 2, canvas.height / 2 + 80);
+}
     
 }
 
@@ -470,6 +485,7 @@ document.getElementById("startBtn").addEventListener("click", () => {
     if (!gameRunning) { //if not running
         gameRunning = true;
 
+        gameOver = false;
         batteries = [];
         obstacles = [];
         checkpoint = null;
@@ -500,6 +516,7 @@ document.getElementById("resetBtn").addEventListener("click", () => { // resets 
     levelComplete = false;
     unloading = false;
     collectedCrates = 0;
+    gameOver = false;
 
     // Reset stats
     health = 10;
