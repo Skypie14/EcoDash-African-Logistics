@@ -38,6 +38,7 @@ const boat = {
     height: 25,
     speed: 5,
     verlocity: 0,
+    verticalVerlocity: 0,
     acceleration: 0.3,
     maxSpeed: 5,
     friction: 0.2
@@ -63,6 +64,17 @@ function update() { //only moves the boat left and right not up and down
         boat.verlocity += boat.acceleration;
     }
 
+    //moves the boat upward
+    if (keys["ArrowUp"] || keys["w"]) {
+        boat.verticalVerlocity -= boat.acceleration;
+    }
+
+    // moves the boat down
+    if (keys["ArrowDown"] || keys["s"]) {
+        boat.verticalVerlocity += boat.acceleration;
+    }
+    
+
     // friction to slow down the boat when no key is being pressed
     if (!(keys["ArrowLeft"] || keys["a"]) && !(keys["ArrowRight"] || keys["d"])) {
 
@@ -78,7 +90,22 @@ function update() { //only moves the boat left and right not up and down
         boat.verlocity = 0;
     }
 
-    }   
+    }
+    
+    if (!(keys["ArrowUp"] || keys["w"]) && !(keys["ArrowDown"] || keys["s"])) {
+
+    if (boat.verticalVerlocity > 0) {
+        boat.verticalVerlocity -= boat.friction;
+    }
+
+    if (boat.verticalVerlocity < 0) {
+        boat.verticalVerlocity += boat.friction;
+    }
+
+    if (Math.abs(boat.verticalVerlocity) < boat.friction) {
+        boat.verticalVerlocity = 0;
+    }
+    }
 
     // stops the boat from going faster than max speed
 
@@ -90,8 +117,17 @@ function update() { //only moves the boat left and right not up and down
         boat.verlocity = -boat.maxSpeed;
     }
 
+    if (boat.verticalVerlocity > boat.maxSpeed) {
+        boat.verticalVerlocity = boat.maxSpeed;
+    }
+
+    if (boat.verticalVerlocity < -boat.maxSpeed) {
+        boat.verticalVerlocity = -boat.maxSpeed;
+    }
+
     //boat position updates based on verlocity
     boat.x += boat.verlocity;
+    boat.y += boat.verticalVerlocity;
 
     // Keep boat inside of the canvas [barriers]
     if (boat.x < 0) {
@@ -100,6 +136,15 @@ function update() { //only moves the boat left and right not up and down
 
     if (boat.x + boat.width > canvas.width) {
         boat.x = canvas.width - boat.width;
+    }
+    
+    if (boat.y < 0) {
+        boat.y = 0;
+    }
+
+
+    if (boat.y + boat.height > canvas.height) {
+        boat.y = canvas.height - boat.height;
     }
 
     // moves the batteries down the screen and checks for collision w/ the boat
@@ -164,7 +209,16 @@ obstacle.y += obstacle.verlocity;
         hitSound.play(); //plays the sound when the boat collides with an obstacle
 
         if (health <= 0) { //ends game if health = 0
-            alert("Game Over!");
+            health = 0;
+            updateUI();
+            gameRunning = false;
+            GameOver=true;
+
+            sinking = true;
+
+            batteries = [];
+            obstacles = [];
+            checkpoint = null;
         }
     }
 
@@ -216,25 +270,7 @@ function draw() {
 
     ctx.fillStyle = "#65caf1";
     ctx.fillRect(boat.x + 15, boat.y + 4, 15, 6);
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
 
-    ctx.beginPath();
-    ctx.moveTo(boat.x + 22, boat.y + 2);
-    ctx.lineTo(boat.x + 22, boat.y - 8);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(boat.x + 16, boat.y - 8);
-    ctx.lineTo(boat.x + 28, boat.y - 8);
-    ctx.stroke();
-    ctx.fillStyle = "black";
-    
-    ctx.beginPath();
-    ctx.arc(boat.x + 16, boat.y - 8, 2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(boat.x + 28, boat.y - 8, 2, 0, Math.PI * 2);
 
 
     // Draw batteries 
@@ -494,6 +530,14 @@ document.getElementById("resetBtn").addEventListener("click", () => { // resets 
     
     updateUI();
     document.getElementById("currentAngle").textContent = "The current angle is: towards/against the boat";
+
+    //resets verlocity and position
+
+    boat.verlocity = 0;
+    boat.verticalVerlocity = 0;
+
+    boat.x = 175;
+    boat.y = 650;
 
     // Clear all objects
     batteries = [];
