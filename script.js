@@ -356,7 +356,6 @@ function draw() {
     }
 }
     
-    
 }
 
 // battery and obstacle and checkpoint creation functions
