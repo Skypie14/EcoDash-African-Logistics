@@ -33,7 +33,7 @@ let currentY = Math.sin(currentAngle); // calculates the y of current angle
 // tracks what key is currently being pressed
 const keys = {};
 
-//the boat info
+//the boat information
 const boat = {
     x: 175,
     y: 650,
@@ -94,6 +94,7 @@ function update() { //only moves the boat left and right not up and down
     }
 
     }
+    //friction to slow down boat
     
     if (!(keys["ArrowUp"] || keys["w"]) && !(keys["ArrowDown"] || keys["s"])) {
 
@@ -152,10 +153,9 @@ function update() { //only moves the boat left and right not up and down
 
     // moves the batteries down the screen and checks for collision w/ the boat
     batteries.forEach((battery, index) => {
-    
 
     const boatDirectionY = -1; 
-    if (currentY * boatDirectionY > 0) {
+    if (currentY * boatDirectionY > 0) { 
         battery.verlocity += 0.01; // moving with boat direction
     } else {
         battery.verlocity -= 0.01; // moving against boat direction
@@ -412,9 +412,9 @@ function spawnObstacle() {
         }
     ];
 
-    const obsType = obstacleType[Math.floor(Math.random() * obstacleType.length)];
+    const obsType = obstacleType[Math.floor(Math.random() * obstacleType.length)]; // randomizes obstacle type to get selected
 
-    
+    //draws obstacle
     obstacles.push({
         type: obsType.type,
         x: Math.random() * (canvas.width - 25),
