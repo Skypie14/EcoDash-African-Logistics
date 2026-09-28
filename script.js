@@ -13,6 +13,8 @@ let checkpoint = null;
 let startTime = 0;
 let gameRunning = false;
 let levelComplete = false;
+let collectedCrates = 0;
+let unloading = false;
 
 let hitSound = new Audio("hit.mp3"); //https://dev.to/amitavmishra99/play-audio-with-htmlaudioelement-api-in-javascript-2fcf
 let collectSound = new Audio("battery.mp3");
@@ -171,6 +173,7 @@ function update() { //only moves the boat left and right not up and down
             score += 10; //score increase
         } else if (battery.type === "crate") {
             score += 20; //score increase
+            collectedCrates++
         }
 
         collectSound.play(); //plays the sound when the boat collides with a crate
@@ -238,13 +241,14 @@ if (checkpoint) {
 
     if (collision(boat, checkpoint)) {
         checkpointSound.play(); //plays the sound when the boat collides with a checkpoint
+        unloading = true;
+
         levelComplete = true;
         gameRunning = false;
 
         document.getElementById("startBtn").textContent = "Next Level";
         document.getElementById("startBtn").style.display = "block";
 
-        alert("Level Complete!");
     }
 }
 
@@ -310,12 +314,7 @@ function draw() {
     if (obstacle.type === "house") {
 
         ctx.fillStyle = "#d2b48c";
-        ctx.fillRect(
-            obstacle.x,
-            obstacle.y + 15,
-            40,
-            25
-        );
+        ctx.fillRect(obstacle.x,obstacle.y + 15,40,25);
 
         ctx.fillStyle = "darkred";
         ctx.beginPath();
@@ -329,59 +328,33 @@ function draw() {
     if (obstacle.type === "logs") {
 
         ctx.fillStyle = "saddlebrown";
-
-        ctx.fillRect(
-            obstacle.x,
-            obstacle.y,
-            50,
-            8
-        );
-
-        ctx.fillRect(
-            obstacle.x,
-            obstacle.y + 10,
-            50,
-            8
-        );
+        ctx.fillRect(obstacle.x,obstacle.y,50,8);
+        ctx.fillRect(obstacle.x, obstacle.y + 10, 50,8);
     }
 
     // debris
     if (obstacle.type === "debris") {
 
         ctx.fillStyle = "#666";
-
-        ctx.fillRect(
-            obstacle.x,
-            obstacle.y,
-            12,
-            12
-        );
-
-        ctx.fillRect(
-            obstacle.x + 10,
-            obstacle.y + 8,
-            12,
-            12
-        );
-
-        ctx.fillRect(
-            obstacle.x + 5,
-            obstacle.y + 18,
-            14,
-            10
-        );
+        ctx.fillRect(obstacle.x,obstacle.y,12,12);
+        ctx.fillRect(obstacle.x + 10, obstacle.y + 8,12,12);
+        ctx.fillRect(obstacle.x + 5, obstacle.y + 18,14, 10);
     }
 });
 
     // draw checkpoint
     if (checkpoint) {
         ctx.fillStyle = "gold";
-        ctx.fillRect(
-        checkpoint.x,
-        checkpoint.y,
-        checkpoint.width,
-        checkpoint.height
-    );}
+        ctx.fillRect(checkpoint.x,checkpoint.y,checkpoint.width, checkpoint.height);}
+
+    if (unloading && checkpoint) {
+
+    // Draw collected crates
+    for (let i = 0; i < collectedCrates; i++) {
+        ctx.fillStyle = "saddlebrown";
+        ctx.fillRect(250 + (i % 10) * 16,checkpoint.y + 2 + Math.floor(i / 10) * 15,12,12);
+    }
+}
     
     
 }
@@ -502,6 +475,10 @@ document.getElementById("startBtn").addEventListener("click", () => {
         obstacles = [];
         checkpoint = null;
 
+        unloading = false;
+    
+        collectedCrates = 0;
+
         startTime = Date.now(); //resets the timer for the checkpoint
 
         currentAngle = Math.random() * Math.PI * 2;
@@ -522,6 +499,8 @@ document.getElementById("resetBtn").addEventListener("click", () => { // resets 
     // Stop game
     gameRunning = false;
     levelComplete = false;
+    unloading = false;
+    collectedCrates = 0;
 
     // Reset stats
     health = 10;
